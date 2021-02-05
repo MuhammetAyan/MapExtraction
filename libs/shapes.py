@@ -56,21 +56,45 @@ def _unit_vektor(x:float, y:float) -> Tuple[float, float]:
     return x / b, y / b
 
 
-
-def Lidar(frame, robot, mapframe) -> np.uint8:
+def LidarCenterPoint(robot) ->Tuple[int, int]:
     x, y = robot["position"]
     w, h = robot["size"]
     a = robot["angle"]
     v = robot["v"]
-    tx = int(x + w // 2 * math.cos(deregee2radian(a)) + random.randint(-3, 3))
-    ty = int(y + w // 2 * math.sin(deregee2radian(a)) + random.randint(-3, 3))
-    # color =np.array([255, 255, 255], dtype=np.uint8)
-    # for c in range(3):
-    #     frame[ty, tx, c] = color[c]
-    # lx, ly = _unit_vektor(tx - x, ty - y)
-    # lidar_vektor = lx * 100, ly * 100
-    # end_point = (int(x + lidar_vektor[0]), int(y + lidar_vektor[1]))
-    # frame = cv2.line(frame, (tx, ty), end_point, (0,255,0))
+    tx = round(x + w // 2 * math.cos(deregee2radian(a)))
+    ty = round(y + w // 2 * math.sin(deregee2radian(a)))
+    return tx, ty
+
+def LidarLaserThread(frame, mapframe, CenterPoint: Tuple[int, int], laserAngle: float) -> None:
+    α = deregee2radian(laserAngle)
+    lx, ly = CenterPoint[0] - x, CenterPoint[1] - y
+
+    llx, lly = _unit_vektor(lx * math.cos(α) - ly * math.sin(α), lx * math.sin(α) + ly * math.cos(α))
+    for l in range(1, 250):
+        lidar_vektor = llx * l, lly * l
+        ex, ey = (int(x + lidar_vektor[0]), int(y + lidar_vektor[1]))
+        if ex >= frame.shape[1] or ey >= frame.shape[0] or ex < 0 or ey < 0:
+            break
+        color = [255, 255, 255]
+        ok = True
+        for c in range(3):
+            if frame[ey, ex, c] != color[c]:
+                ok = False
+                break
+        if ok:
+            mapframe[ey,ex] = np.uint8(255)
+            break
+        else:
+            mapframe[ey,ex] = np.uint8(0)
+
+
+def Lidar(frame, robot, mapframe) -> None:
+    x, y = robot["position"]
+    w, h = robot["size"]
+    a = robot["angle"]
+    v = robot["v"]
+    tx = int(x + w // 2 * math.cos(deregee2radian(a)))
+    ty = int(y + w // 2 * math.sin(deregee2radian(a)))
     for angle in range(-40, 41, 5):
         α = deregee2radian(angle)
         lx, ly = tx - x, ty - y
@@ -81,7 +105,6 @@ def Lidar(frame, robot, mapframe) -> np.uint8:
             ex, ey = (int(x + lidar_vektor[0]), int(y + lidar_vektor[1]))
             if ex >= frame.shape[1] or ey >= frame.shape[0] or ex < 0 or ey < 0:
                 break
-                return np.uint8(255)
             color = [255, 255, 255]
             ok = True
             for c in range(3):
@@ -90,22 +113,27 @@ def Lidar(frame, robot, mapframe) -> np.uint8:
                     break
             if ok:
                 mapframe[ey,ex] = np.uint8(255)
-                # return np.uint8(l)
                 break
             else:
                 mapframe[ey,ex] = np.uint8(0)
-    
-    return np.uint8(255)
+
 
 def ArrivalToGoal(mapframe, x: int, y: int, robot) -> bool:
     angle = radian2deregee(math.atan2(y - robot["position"][1], x - robot["position"][0])) - robot["angle"]
-    d_a = 0
-    if angle <= -3:
-        d_a = -3
-    elif angle >= 3:
-        d_a = 3
-    robot["angle"] += d_a
-    robot["v"] = 1
+    dy, dx = (y - robot["position"][1], x - robot["position"][0])
+    if dx != 0 or dy != 0:
+        d_a = 0
+        if angle <= -3:
+            d_a = -3
+        elif angle >= 3:
+            d_a = 3
+        elif angle > -3 and angle < 3:
+            d_a = angle
+        robot["angle"] += d_a
+    if angle == 0:
+        robot["v"] = 3
+    else:
+        robot["v"] = 0
     # mapframe = cv2.line(mapframe, (int(robot["position"][0]), int(robot["position"][1])), (x, y), (50,), 3)
     if abs(robot["position"][0] - x) < 5 and abs(robot["position"][1] - y) < 5:
         robot["v"] = 0

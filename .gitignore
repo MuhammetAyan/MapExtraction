@@ -1,3 +1,7 @@
 /developer.md
 /old_js
 /_media
+.vscode/launch.json
+/libs/__pycache__
+/tests/__pycache__
+/tests/Lidar/__pycache__
