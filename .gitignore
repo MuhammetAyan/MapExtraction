@@ -1,6 +1,6 @@
 /developer.md
 /old_js
-/_media
+/_media/__
 .vscode/launch.json
 /libs/__pycache__
 /tests/__pycache__
