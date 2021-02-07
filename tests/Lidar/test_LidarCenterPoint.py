@@ -18,9 +18,12 @@ pytest.robot = {
 # pytest.LidarAngle = 0
 
 
-@given(parsers.parse('Robot position: ({x:d}, {y:d}), angle: {angle:d}'))
-def set_robot(x, y, angle):
+@given(parsers.parse('Robot position: ({x:d}, {y:d})'))
+def set_robot(x, y):
     pytest.robot["position"] = (x, y)
+
+@given(parsers.parse('Angle: {angle:d}'))
+def set_robot(angle):
     pytest.robot["angle"] = angle
 
 
