@@ -2,7 +2,7 @@
 
 Robotların fiziksel ortamdaki hareketleri 2D olarak simüle eder. Bu simülasyon robotların ortamı haritalandırması için hazırlanmıştır.
 
-![](_media\Screenshot.png)
+![](_media/Screenshot.png)
 
 ## Özellikler
 
