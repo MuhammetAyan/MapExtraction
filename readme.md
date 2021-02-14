@@ -2,7 +2,7 @@
 
 Robotların fiziksel ortamdaki hareketleri 2D olarak simüle eder. Bu simülasyon robotların ortamı haritalandırması için hazırlanmıştır.
 
-![](_media/Screenshot.png)
+![](_media/map_extraction.gif)
 
 ## Özellikler
 
@@ -25,14 +25,10 @@ Sonra `main.py` dosyasını çalıştırınız.
 
 Robotu kontrol etmek için
 
-`W` İleri hızlandırma
+Fare ile gitmesini istediğiniz konuma tıklayın.
 
-`S` Geri hızladırma
+`1` Robot bilgilerini göster / gizle
 
-`A` Sola dönüş
-
-`D` Sağa dönüş
-
-`Space` Fren
+`2` Robot haritasını göster / gizle
 
 `Esc` Çıkış
