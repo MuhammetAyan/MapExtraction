@@ -1,7 +1,7 @@
 /developer.md
-/old_js
 /_media/__
 .vscode/launch.json
-/libs/__pycache__
-/tests/__pycache__
-/tests/Lidar/__pycache__
+/*/__pycache__
+/**/__pycache__
+/design
+/.pytest_cache
